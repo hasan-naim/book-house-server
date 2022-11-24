@@ -24,10 +24,19 @@ async function dbConnect() {
   try {
     const database = client.db("bookHouse");
     const catagoriesCollection = database.collection("catagories");
+    const usersCollection = database.collection("users");
 
     app.get("/catagories", async (req, res) => {
       const query = {};
       const result = await catagoriesCollection.find(query).toArray();
+
+      res.send(result);
+    });
+
+    app.post("/user", async (req, res) => {
+      const data = req.body;
+
+      const result = await usersCollection.insertOne(data);
 
       res.send(result);
     });
