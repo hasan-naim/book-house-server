@@ -27,8 +27,6 @@ async function dbConnect() {
     const usersCollection = database.collection("users");
     const booksCollection = database.collection("books");
 
-    // const result = await booksCollection.insertMany()
-
     app.get("/catagories", async (req, res) => {
       const query = {};
       const result = await catagoriesCollection.find(query).toArray();
@@ -58,6 +56,15 @@ async function dbConnect() {
       res.send(result);
     });
 
+    app.get("/catagories/:id", async (req, res) => {
+      const catagorie = req.params.id;
+
+      const query = { catagorie: catagorie };
+
+      const result = await booksCollection.find(query).toArray();
+
+      res.send(result);
+    });
     ///error
   } catch (err) {
     console.log(err, "error from try catch block");
