@@ -25,6 +25,9 @@ async function dbConnect() {
     const database = client.db("bookHouse");
     const catagoriesCollection = database.collection("catagories");
     const usersCollection = database.collection("users");
+    const booksCollection = database.collection("books");
+
+    // const result = await booksCollection.insertMany()
 
     app.get("/catagories", async (req, res) => {
       const query = {};
@@ -40,6 +43,22 @@ async function dbConnect() {
 
       res.send(result);
     });
+
+    app.post("/googleUser", async (req, res) => {
+      const data = req.body;
+      const query = { email: data.email };
+      const user = await usersCollection.findOne(query);
+      if (user) {
+        res.send({ message: "It was listed in the database." });
+        return;
+      }
+
+      const result = await usersCollection.insertOne(data);
+
+      res.send(result);
+    });
+
+    ///error
   } catch (err) {
     console.log(err, "error from try catch block");
   }
