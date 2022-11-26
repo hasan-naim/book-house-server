@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const cors = require("cors");
 
@@ -26,6 +26,7 @@ async function dbConnect() {
     const catagoriesCollection = database.collection("catagories");
     const usersCollection = database.collection("users");
     const booksCollection = database.collection("books");
+    const addedListColletion = database.collection("addedList");
 
     app.get("/catagories", async (req, res) => {
       const query = {};
@@ -65,6 +66,51 @@ async function dbConnect() {
 
       res.send(result);
     });
+
+    app.patch("/report/:id", async (req, res) => {
+      const bookId = req.params.id;
+
+      const query = { _id: ObjectId(bookId) };
+      const updatedDoc = {
+        $set: {
+          reported: true,
+        },
+      };
+
+      const result = await booksCollection.updateOne(query, updatedDoc);
+
+      res.send(result);
+    });
+
+    app.post("/addtolist", async (req, res) => {
+      const doc = req.body;
+      if (!doc) {
+        res.send({ message: "no valid information" });
+        return;
+      }
+      const queryForFind = { bookId: doc.bookId, userEmail: doc.userEmail };
+      const result = await addedListColletion.findOne(queryForFind);
+      if (result === null) {
+        const response = await addedListColletion.insertOne(doc);
+        res.send(response);
+        return;
+      }
+      res.send({ message: "exists" });
+    });
+
+    app.get("/orders", async (req, res) => {
+      const userEmail = req.query.email;
+      const filter = { userEmail: userEmail };
+      const result = await addedListColletion.find(filter).toArray();
+      if (result !== null) {
+        res.send({ message: "success", result: result });
+        return;
+      } else {
+        res.send({ message: "no data" });
+        return;
+      }
+    });
+
     ///error
   } catch (err) {
     console.log(err, "error from try catch block");
