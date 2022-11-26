@@ -102,8 +102,12 @@ async function dbConnect() {
       const userEmail = req.query.email;
       const filter = { userEmail: userEmail };
       const result = await addedListColletion.find(filter).toArray();
-      if (result !== null) {
-        res.send({ message: "success", result: result });
+
+      if (result !== null && result.length > 0) {
+        res.send({
+          message: "success",
+          userAddedData: result,
+        });
         return;
       } else {
         res.send({ message: "no data" });
