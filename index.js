@@ -35,12 +35,30 @@ async function dbConnect() {
       res.send(result);
     });
 
+    app.get("/user", async (req, res) => {
+      const email = req.query.email;
+      const filter = { email: email };
+      const result = await usersCollection.findOne(filter);
+      res.send(result);
+    });
+
     app.post("/user", async (req, res) => {
       const data = req.body;
 
       const result = await usersCollection.insertOne(data);
 
       res.send(result);
+    });
+
+    app.post("/addBook", async (req, res) => {
+      const data = req.body;
+
+      try {
+        const result = await booksCollection.insertOne(data);
+        res.send({ message: "success" });
+      } catch (err) {
+        console.log(err);
+      }
     });
 
     app.post("/googleUser", async (req, res) => {
@@ -113,6 +131,26 @@ async function dbConnect() {
         res.send({ message: "no data" });
         return;
       }
+    });
+
+    /// get books by specific user
+    app.get("/myaddedbooks", async (req, res) => {
+      const userId = req.query.userId;
+      const query = { postUserId: userId };
+      const result = await booksCollection.find(query).toArray();
+      if (result !== null) {
+        res.send({ message: "success", data: result });
+      } else {
+        res.send({ message: "success", data: [] });
+      }
+    });
+
+    /// delete book by seller
+    app.delete("/book", async (req, res) => {
+      const id = req.query.id;
+      const query = { _id: ObjectId(id) };
+      const result = await booksCollection.deleteOne(query);
+      res.send(result);
     });
 
     ///error
