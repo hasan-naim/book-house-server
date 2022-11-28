@@ -42,6 +42,14 @@ async function dbConnect() {
       res.send(result);
     });
 
+    /// delete user
+    app.delete("/user", async (req, res) => {
+      const id = req.query.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await usersCollection.deleteOne(filter);
+      res.send(result);
+    });
+
     /// get buyers
     app.get("/allbuyers", async (req, res) => {
       const query = { role: "buyer" };
