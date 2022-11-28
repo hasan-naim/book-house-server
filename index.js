@@ -41,6 +41,12 @@ async function dbConnect() {
       const result = await usersCollection.findOne(filter);
       res.send(result);
     });
+    app.get("/singleUser", async (req, res) => {
+      const id = req.query.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await usersCollection.findOne(filter);
+      res.send(result);
+    });
 
     /// delete user
     app.delete("/user", async (req, res) => {
@@ -84,7 +90,7 @@ async function dbConnect() {
         },
       };
 
-      const result = await usersCollection.updateOne(query);
+      const result = await usersCollection.updateOne(query, updatedDoc);
       res.send(result);
     });
 
