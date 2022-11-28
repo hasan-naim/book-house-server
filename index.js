@@ -62,6 +62,32 @@ async function dbConnect() {
       }
     });
 
+    /// get sellers
+    app.get("/allsellers", async (req, res) => {
+      const query = { role: "seller" };
+      const result = await usersCollection.find(query).toArray();
+      if (result === null) {
+        res.send({ message: "no data", data: [] });
+      } else {
+        res.send({ message: "success", data: result });
+      }
+    });
+
+    /// make verify or unverify user
+    app.patch("/verifyUser", async (req, res) => {
+      const condition = req.query.condition;
+      const id = req.query.id;
+      const query = { _id: ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          verified: condition === "true",
+        },
+      };
+
+      const result = await usersCollection.updateOne(query);
+      res.send(result);
+    });
+
     app.post("/user", async (req, res) => {
       const data = req.body;
 
