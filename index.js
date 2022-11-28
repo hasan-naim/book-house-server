@@ -61,6 +61,13 @@ async function dbConnect() {
       res.send(result);
     });
 
+    /// get advertise books
+    app.get("/advertised", async (req, res) => {
+      const query = { advertised: true };
+      const result = await booksCollection.find(query).toArray();
+      res.send(result);
+    });
+
     /// delete user
     app.delete("/user", async (req, res) => {
       const id = req.query.id;
