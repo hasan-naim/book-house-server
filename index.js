@@ -42,6 +42,18 @@ async function dbConnect() {
       res.send(result);
     });
 
+    /// get buyers
+    app.get("/allbuyers", async (req, res) => {
+      const query = { role: "buyer" };
+
+      const result = await usersCollection.find(query).toArray();
+      if (result === null) {
+        res.send({ message: "no data", data: [] });
+      } else {
+        res.send({ message: "success", data: result });
+      }
+    });
+
     app.post("/user", async (req, res) => {
       const data = req.body;
 
@@ -150,6 +162,20 @@ async function dbConnect() {
       const id = req.query.id;
       const query = { _id: ObjectId(id) };
       const result = await booksCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    /// advertising the book
+    app.patch("/advertise", async (req, res) => {
+      const id = req.query.id;
+      const condition = req.query.condition;
+      const query = { _id: ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          advertised: condition === "true",
+        },
+      };
+      const result = await booksCollection.updateOne(query, updatedDoc);
       res.send(result);
     });
 
