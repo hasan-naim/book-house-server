@@ -41,6 +41,12 @@ async function dbConnect() {
       const result = await usersCollection.findOne(filter);
       res.send(result);
     });
+    /// get reported book
+    app.get("/reportedBook", async (req, res) => {
+      const filter = { reported: true };
+      const result = await booksCollection.find(filter).toArray();
+      res.send(result);
+    });
     app.get("/singleUser", async (req, res) => {
       const id = req.query.id;
       const filter = { _id: ObjectId(id) };
