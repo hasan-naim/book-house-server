@@ -47,6 +47,13 @@ async function dbConnect() {
       const result = await booksCollection.find(filter).toArray();
       res.send(result);
     });
+    /// delete reported book
+    app.delete("/reportedBook", async (req, res) => {
+      const id = req.query.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await booksCollection.deleteOne(filter);
+      res.send(result);
+    });
     app.get("/singleUser", async (req, res) => {
       const id = req.query.id;
       const filter = { _id: ObjectId(id) };
